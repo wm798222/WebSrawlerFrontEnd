@@ -8,24 +8,15 @@ export default class Joblist extends Component {
     constructor() {
         super();
         this.state = {
-            joblist: ["not yet gotten"]
-        }
+            joblist: ["not yet gotten"],
+            selectionModel: [],
+            rows: [],
+            addedRows : []
+        }        
     };
-    
     
     handleButtonClick = () => {
         this.loadJobs();
-
-
-        // axios.get("/getJobList").then(response => {
-        //     console.log("getting job list");
-        //     console.log(response.data);
-            
-        //     // this.setState({
-        //     //     joblist: response.data
-        //     // });
-        //     // setJobList(response.data);
-        // });
     };
 
     async loadJobs() {
@@ -34,41 +25,82 @@ export default class Joblist extends Component {
         if(status===200)
         {
           const data = promise.data;
-          // TODO: this suppose to print something
-        //   console.log(data);
           this.setState({joblist:data});
         }
     }
 
     render() {
-        // const [jobList, setJobList] = useState(["Not yet gotten"]);
+        // const renObjData = this.state.joblist.map(function(data, idx) {
+        //     return (
+        //         <div>
+        //             <p>{data.id}</p> <p>{data.company}</p> <p>{data.positionname}</p>
+        //         </div>
+        //     );
+        // });
+
+        const columns = [
+            { field: 'id', headerName: 'ID', width: 70 },
+            { field: 'jobID', headerName: 'jobID', width: 130 },
+            { field: 'company', headerName: 'Company Name', width: 130 },
+            { field: 'positionname', headerName: 'Position Name', width: 450 },
+            {
+              field: 'summary',
+              headerName: 'Summary',
+              width: 1000,
+            },
+          ];
+          
+        const rows = [];
+
+        this.state.joblist.map(function(data, idx) {
+            rows.push({ id: idx, jobID: data.id, company: data.company, positionname: data.positionname, summary: data.summary});
+        });
+
+        // reference: https://stackoverflow.com/questions/64232909/how-to-delete-a-specific-row-in-material-ui-datagrid-reactjs
+        const handleRowSelection = (e) => {
+            this.setState({addedRows : [...this.state.addedRows, ...rows.filter((r) => r.id === e.data.id)]});
+          };
+        
+          const handleClickToAdd = () => {
+            // send post request to backend
+            if (this.state.addedRows.length === 0) {
+                alert("Please select the jobs to add");
+            } else {
+                var idList = [];
+                for (var i = 0; i < this.state.addedRows.length; i++) {
+                    idList.push(this.state.addedRows[i].jobID);
+                }
+                alert(idList);
+                axios.post('http://localhost:5000/addJobs ', idList)
+                    .then((response) => {
+                    console.log(response);
+                    }, (error) => {
+                    console.log(error);
+                    });
+            }
+            
+          };
+
         return (
             <div>
-                {/* <Button onClick={this.handleButtonClick}>Get Jobs From Crawler</Button> */}
                 <Button color="primary" onClick={this.handleButtonClick}>Get Jobs From Crawler</Button>
                 <h1>Job List</h1>
-                
-                <div>
-
-                {
-                    this.state.joblist.map((jobDetails, index) =>  
-                    {
-                        console.log(jobDetails.data);
-                        return jobDetails.data.map((col, idx) => 
-                        (
-                            <div key={idx}>
-                                <p>{col}</p>
-                            </div>
-                        ));
-                    }
-                    
-                )}
-                    {/* <div style={{ display: 'flex', height: '100%' }}>
-                        <div style={{ flexGrow: 1 }}>
-                            <DataGrid {...this.state.joblist} />
-                        </div>
-                    </div>                 */}
+                <div style={{ height: 1000, width: '100%' }}>
+                    <DataGrid 
+                    rows={rows} 
+                    columns={columns} 
+                    checkboxSelection 
+                    onSelectionModelChange={(newSelection) => {
+                        this.setState(newSelection.selectionModel);
+                    }}
+                    selectionModel={this.state.selectionModel}
+                    onRowSelected={handleRowSelection}
+                    />
                 </div>
+                <br />
+                <Button variant="contained" color="primary" onClick={handleClickToAdd}>
+                    Add Selected Jobs
+                </Button>
             </div>
         );
     }
