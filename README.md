@@ -69,3 +69,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 # WebSrawlerFrontEnd
+
+How to run importer
+
+Step 1: run backend by "npm start"
+Step 2: run this front end by "npm start", open the corresponding website. (e.g. localhost:3000)
+Step 3: Click "Get Jobs From Crawler" button on the very top of the page.
+Step 4: Select the jobs you want to import
+Step 5: Click "Add Selected Job" at the bottom of the page
