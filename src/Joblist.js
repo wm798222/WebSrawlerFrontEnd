@@ -2,6 +2,8 @@ import React, { Component, useState } from 'react';
 import axios from 'axios';
 import { Button } from '@material-ui/core';
 import { DataGrid } from '@material-ui/data-grid';
+import Box from '@material-ui/core/Box';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 export default class Joblist extends Component {
     
@@ -71,7 +73,7 @@ export default class Joblist extends Component {
                     idList.push(this.state.addedRows[i].jobID);
                 }
                 alert(idList);
-                axios.post('http://localhost:5000/addJobs ', idList)
+                axios.post('/addJobs ', idList)
                     .then((response) => {
                     console.log(response);
                     }, (error) => {
@@ -82,8 +84,16 @@ export default class Joblist extends Component {
           };
 
         return (
+
+
             <div>
-                <Button color="primary" onClick={this.handleButtonClick}>Get Jobs From Crawler</Button>
+                <CssBaseline />
+                <Box textAlign='center'>
+                    <Button variant='contained' color="primary" onClick={this.handleButtonClick}>
+                        Get Jobs From Crawler
+                    </Button>
+                </Box>
+                
                 <h1>Job List</h1>
                 <div style={{ height: 1000, width: '100%' }}>
                     <DataGrid 
@@ -102,6 +112,14 @@ export default class Joblist extends Component {
                     Add Selected Jobs
                 </Button>
             </div>
+
+
+
+
+
+
+
+
         );
     }
 }
